@@ -8,13 +8,15 @@ class MicroVLAPolicy(nn.Module):
     Multimodal Actor-Critic neural network for the Micro-VLA.
     Outputs action distributions and state values based on visual and proprioceptive inputs.
     """
-    def __init__(self, action_dim=6):
+    def __init__(self, action_dim=6, state_dim=47):
         super().__init__()
         
+        # 1. Instantiate the Frozen VLA Feature Extractor (Outputs 512 dims)
         self.vla_encoder = FrozenVLAWrapper()
         
+        # 2. MLP feature extractor for proprioceptive state (Outputs 64 dims)
         self.state_mlp = nn.Sequential(
-            nn.Linear(47, 64),
+            nn.Linear(state_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 64),
             nn.ReLU()
@@ -40,12 +42,12 @@ class MicroVLAPolicy(nn.Module):
             nn.Linear(128, 1)
         )
 
-    def get_action_and_value(self, rgb, state, action=None):
+    def get_action_and_value(self, rgb, state, action=None, deterministic=False):
         
         with torch.no_grad():
             vision_features = self.vla_encoder(rgb)  
             
-        state_features = self.state_mlp(state) 
+        state_features = self.state_mlp(state)       
         
         combined_features = torch.cat([vision_features, state_features], dim=1)
         
@@ -55,8 +57,12 @@ class MicroVLAPolicy(nn.Module):
         
         value = self.critic(combined_features)          
         if action is None:
-            action = probs.sample()
+            if deterministic:
+                action = action_mean
+            else:
+                action = probs.sample()
             
+        # Calculate log prob and sum across action dimensions
         log_prob = probs.log_prob(action).sum(dim=1)
         
         entropy = probs.entropy().sum(dim=1)

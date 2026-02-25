@@ -1,0 +1,7 @@
+torch
+torchvision
+mani_skill
+gymnasium
+wandb
+hydra-core
+omegaconf

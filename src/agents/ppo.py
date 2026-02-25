@@ -54,6 +54,8 @@ class RolloutBuffer:
         self.advantages, self.returns = agent.compute_gae(
             self.rewards, self.values, self.dones, next_value, next_done
         )
+        # Normalize advantages at the buffer level
+        self.advantages = (self.advantages - self.advantages.mean()) / (self.advantages.std() + 1e-8)
 
     def get_dataloader(self, batch_size):
         """
@@ -155,9 +157,6 @@ class PPOAgent:
             b_returns: Batch of computed returns (Batch,)
             b_advantages: Batch of computed advantages (Batch,)
         """
-        # Normalize advantages at the batch level to stabilize training
-        b_advantages = (b_advantages - b_advantages.mean()) / (b_advantages.std() + 1e-8)
-        
         # Forward pass through the policy with the existing actions to get new probs/values
         _, current_logprobs, entropy, current_values = self.policy.get_action_and_value(b_rgb, b_state, action=b_actions)
         

@@ -52,17 +52,8 @@ def eval_policy(weights_path: str, env_id: str = "PushCube-v1", seed: int = 42, 
         
         # Get purely deterministic action from the mean
         with torch.no_grad():
-            _, _, _, _ = policy.get_action_and_value(rgb, state)
-            # In evaluation, we don't want to sample. 
-            # We want to take the actor_mean directly.
-            # So, we pass it through the network manually to get the deterministic action.
-            
-            vision_features = policy.vla_encoder(rgb)
-            state_features = policy.state_mlp(state)
-            combined_features = torch.cat([vision_features, state_features], dim=1)
-            deterministic_action = policy.actor_mean(combined_features)
-            
-            action_np = deterministic_action.cpu().numpy().squeeze(0) # Remove batch dim
+            action, _, _, _ = policy.get_action_and_value(rgb, state, deterministic=True)
+            action_np = action.cpu().numpy().squeeze(0) # Remove batch dim
 
         # Step the environment
         obs, reward, terminated, truncated, info = env.step(action_np)

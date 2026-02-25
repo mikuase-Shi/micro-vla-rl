@@ -39,7 +39,7 @@ def train(cfg: DictConfig):
     # --------------------------------------------------------------------------
     # Wandb Setup
     # --------------------------------------------------------------------------
-    logger = WandbLogger()
+    logger = WandbLogger(config=OmegaConf.to_container(cfg, resolve=True))
 
     # --------------------------------------------------------------------------
     # Hyperparameters
@@ -64,8 +64,8 @@ def train(cfg: DictConfig):
     # Note: In a real run, check the observation space. 
     # For now, using the configured values we defined earlier.
     rgb_shape = (3, 256, 256)
-    state_dim = cfg.model.state_dim
-    action_dim = cfg.model.action_dim
+    state_dim = envs.single_observation_space["state"].shape[0]
+    action_dim = envs.single_action_space.shape[0]
     
     # --------------------------------------------------------------------------
     # Model and Agent Setup
