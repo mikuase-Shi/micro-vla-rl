@@ -22,7 +22,6 @@ def make_env(env_id, kwargs_dict=None):
         kwargs_dict = {}
         
     def thunk():
-        # import mani_skill inside the thunk for multiprocessing compatibility
         import mani_skill.envs
         env = gym.make(
             env_id, 
@@ -30,6 +29,7 @@ def make_env(env_id, kwargs_dict=None):
             control_mode="pd_ee_delta_pose",
             **kwargs_dict
         )
+        env = gym.wrappers.RecordEpisodeStatistics(env)
         env = ManiSkillVLAWrapper(env)
         return env
     return thunk

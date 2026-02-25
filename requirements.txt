@@ -5,3 +5,4 @@ gymnasium
 wandb
 hydra-core
 omegaconf
+transformers
