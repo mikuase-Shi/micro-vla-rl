@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch Checkpoints and Saved Data
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+data/
+
+# Videos and Visualizations
+eval_videos/
+videos/
+*.mp4
+
+# Environment / OS specific
+.DS_Store
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+logs/
+*.log
+wandb/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp

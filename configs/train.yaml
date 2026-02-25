@@ -1,0 +1,10 @@
+defaults:
+  - agent: ppo
+  - env: maniskill
+  - model: vla_residual
+  - _self_
+
+training:
+  steps: 1000000
+  seed: 42
+  device: "cuda:0"

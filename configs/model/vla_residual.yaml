@@ -1,0 +1,5 @@
+name: micro_vla
+action_dim: 6
+state_dim: 47
+vla_base: resnet18
+quantize: false
